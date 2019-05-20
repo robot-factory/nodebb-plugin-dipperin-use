@@ -8,7 +8,8 @@
 		},
 		{
 			"hook": "filter:admin.header.build", "method": "addAdminNavigation"
-		}
+		},
+		{ "hook": "action:post.save", "method": "beforePostContent" }
 	],
 	"staticDirs": {
 		"static": "./static"

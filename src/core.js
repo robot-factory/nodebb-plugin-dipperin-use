@@ -20,6 +20,10 @@ class Core {
 
     return header
   }
+
+  async beforePostContent (postData) {
+    console.log(postData)
+  }
 }
 
 module.exports = Core
