@@ -51,6 +51,15 @@ class Controllers {
     return target
   }
   */
+
+ renderDipperin(req, res) {
+  const data = {}
+  data.uid = req.uid
+  data.loggedIn = req.loggedIn
+  data.route = req.route
+  console.log('dipperin:', data)
+  res.render('account/plugins/dipperin', data);
+}
 }
 
 module.exports = Controllers

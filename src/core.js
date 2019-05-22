@@ -9,6 +9,9 @@ class Core {
     // const hostControllers = params.controllers
     router.get('/admin/plugins/quickstart', hostMiddleware.admin.buildHeader, controllers.renderAdminPage)
     router.get('/api/admin/plugins/quickstart', controllers.renderAdminPage)
+
+    router.get('/dipperin', hostMiddleware.buildHeader, controllers.renderDipperin);
+    router.get('/api/dipperin', controllers.renderDipperin);
   }
 
   async addAdminNavigation (header) {
@@ -21,8 +24,23 @@ class Core {
     return header
   }
 
+  async addNavigation (header) {
+    header.plugins.push({
+      'icon': 'fa-tasks',
+      'route': '/plugins/quickstart',
+      'name': '快速开始'
+    })
+
+    return header
+  }
+
   async beforePostContent (postData) {
     console.log(postData)
+    return postData
+  }
+
+  addScript () {
+    console.log('我是一个新插件！')
   }
 }
 
