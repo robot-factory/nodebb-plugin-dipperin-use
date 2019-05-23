@@ -1,5 +1,6 @@
 const constants = require('./constants')
-var SocketPlugins = require.main.require('./src/socket.io/plugins');
+const SocketPlugins = require.main.require('./src/socket.io/plugins');
+const db = require.main.require('./src/database')
 
 SocketPlugins.myPlugin = {};
 // SocketPlugins.myPlugin.myMethod = function(socket, data, callback) { ... };
@@ -10,6 +11,8 @@ sockets.init = function (callback) {
     SocketPlugins[constants.SOCKETS] = {};
     SocketPlugins[constants.SOCKETS].myMethod = function(socket, data, callback) { 
         console.log(constants.SOCKETS+'.myMethod'+' 被触发') 
+        console.log(data)
+        console.log(socket)
     };
 }
 
