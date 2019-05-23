@@ -1,9 +1,9 @@
-
+const socket = require('./sockets')
 const Controllers = require('./controllers')
 const controllers = new Controllers()
 
 class Core {
-  async init (params) {
+  async init (params,callback) {
     const router = params.router
     const hostMiddleware = params.middleware
     // const hostControllers = params.controllers
@@ -12,6 +12,9 @@ class Core {
 
     router.get('/dipperin', hostMiddleware.buildHeader, controllers.renderDipperin);
     router.get('/api/dipperin', controllers.renderDipperin);
+
+    socket.init()
+    
   }
 
   async addAdminNavigation (header) {
