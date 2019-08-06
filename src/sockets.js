@@ -12,7 +12,24 @@ sockets.init = function (callback) {
     SocketPlugins[constants.SOCKETS].myMethod = function(socket, data, callback) { 
         console.log(constants.SOCKETS+'.myMethod'+' 被触发') 
         console.log(data)
-        console.log(socket)
+        console.log(socket.uid)
+        const key = `uid:${socket.uid}:dipperin`
+        const writeData = {
+            address: data.address,
+            createtime: Date.now()
+        }
+        db.setObject(key,writeData,function() {
+            console.log('setObject',key,'success')
+        })
+        db.getObject(key,function(err,data) {
+            if (err) {
+                console.log('get',key,'fail',err)
+                return
+            }
+            console.log(key,'data',data)
+        })
+        console.log('type of callback',typeof callback)
+        callback(null,{data:'000000'})
     };
 }
 

@@ -1,6 +1,6 @@
 <div>
   <h1>您的Dipperin账户</h1>
-  <input type="text" name="dipperin-account" />
+  <input type="text" name="dipperin-account" id="dipperin-address"/>
   <button id="dipperin-settings">保存</button>
   <script>
     function dipperinSet () {

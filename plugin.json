@@ -1,24 +1,26 @@
 {
-	"id": "nodebb-plugin-quickstart",
-	"url": "https://github.com/NodeBB/nodebb-plugin-quickstart",
+	"id": "nodebb-plugin-dipperin-use",
+	"url": "https://github.com/BohengLiu/nodebb-plugin-dipperin-use",
 	"library": "./library.js",
 	"hooks": [{
 			"hook": "static:app.load",
 			"method": "init"
-		}, {
-			"hook": "filter:teasers.get",
-			"method": "addScripts"
-		},
+		}, 
 		{
 			"hook": "filter:admin.header.build",
 			"method": "addAdminNavigation"
-		}, {
+		}, 
+		{
 			"hook": "filter:header.build",
 			"method": "addNavigation"
-		},
+		}, 
 		{
 			"hook": "action:post.save",
-			"method": "beforePostContent"
+			"method": "actionPostSave"
+		},
+		{
+			"hook": "filter:post.get",
+			"method": "filterPostGet"
 		}
 	],
 	"staticDirs": {

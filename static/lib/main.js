@@ -17,7 +17,7 @@ $(document).ready(function () {
   // Note how this is shown in the console on the first load of every page
   function dipperinSet() {
     const data = {
-      account: '0x'
+      account: $('#dipperin-address').val()
     }
     socket.emit('plugins.dipperin-account.myMethod', data, function (err, data) {
       if (err) {

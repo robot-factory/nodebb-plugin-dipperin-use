@@ -27,4 +27,19 @@ const origin = new Origin()
 // 转换
 const plugin = transform(origin)
 
+plugin.actionPostSave = function(data) {
+  console.log('post data', data,'111111111111111111111111111111111111111111111111111111111111111')
+}
+
+plugin.filterPostGet = function (data, next) {
+  console.log('filter:post.save', '等待5s！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！')
+  setTimeout(()=>{
+    next(null,data)
+  },5000)
+}
+
+plugin.actionTopicSave = function(data) {
+  console.log('topic data',data,'22222222222222222222222222222222222222222222222222222222222222')
+}
+
 module.exports = plugin
