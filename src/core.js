@@ -7,8 +7,8 @@ class Core {
     const router = params.router
     const hostMiddleware = params.middleware
     // const hostControllers = params.controllers
-    router.get('/admin/plugins/quickstart', hostMiddleware.admin.buildHeader, controllers.renderAdminPage)
-    router.get('/api/admin/plugins/quickstart', controllers.renderAdminPage)
+    router.get('/admin/plugins/dipperin', hostMiddleware.admin.buildHeader, controllers.renderAdminPage)
+    router.get('/api/admin/plugins/dipperin', controllers.renderAdminPage)
 
     router.get('/dipperin', hostMiddleware.buildHeader, controllers.renderDipperin);
     router.get('/api/dipperin', controllers.renderDipperin);
@@ -20,22 +20,22 @@ class Core {
   async addAdminNavigation (header) {
     header.plugins.push({
       'icon': 'fa-tasks',
-      'route': '/plugins/quickstart',
-      'name': '快速开始'
+      'route': '/plugins/dipperin',
+      'name': 'Dipperin'
     })
 
     return header
   }
 
-  async addNavigation (header) {
-    header.plugins.push({
-      'icon': 'fa-tasks',
-      'route': '/plugins/quickstart',
-      'name': '快速开始'
-    })
+  // async addNavigation (header) {
+  //   header.plugins.push({
+  //     'icon': 'fa-tasks',
+  //     'route': '/plugins/quickstart',
+  //     'name': '快速开始'
+  //   })
 
-    return header
-  }
+  //   return header
+  // }
 
   async beforePostContent (postData) {
     console.log(postData)

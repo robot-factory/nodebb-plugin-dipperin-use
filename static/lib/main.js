@@ -15,24 +15,24 @@ $(document).ready(function () {
 
   console.log('nodebb-plugin-dipperin: loaded');
   // Note how this is shown in the console on the first load of every page
-  function dipperinSet() {
-    const data = {
-      account: $('#dipperin-address').val()
-    }
-    socket.emit('plugins.dipperin-account.myMethod', data, function (err, data) {
-      if (err) {
-				console.log('plugins.dipperin-account.myMethod error:', err)
-				return
-      }
-      console.log('plugins.dipperin-account.myMethod data:', data)
-    })
-  }
+  // function dipperinSet() {
+  //   const data = {
+  //     account: $('#dipperin-address').val()
+  //   }
+  //   socket.emit('plugins.dipperin-account.myMethod', data, function (err, data) {
+  //     if (err) {
+	// 			console.log('plugins.dipperin-account.myMethod error:', err)
+	// 			return
+  //     }
+  //     console.log('plugins.dipperin-account.myMethod data:', data)
+  //   })
+  // }
 
   socket.on('dipperin:account.myMethod', function (data) {
     console.log('on dipperin:account.myMethod data:', data)
   })
 
-	$('#dipperin-settings').on('click', dipperinSet)
+	// $('#dipperin-settings').on('click', dipperinSet)
 	
 	$(window).on('action:ajaxify.end', function(data) {
 		console.log('window action:ajaxify.end', data)

@@ -15,11 +15,11 @@
       })
     }
 
-    // socket.on('dipperin:account.myMethod',function (data) {
-    //   console.log('on dipperin:account.myMethod data:', data)
-    // })
+    socket.on('dipperin:account.myMethod',function (data) {
+      console.log('on dipperin:account.myMethod data:', data)
+    })
 
-    // $('#dipperin-settings').on('click', dipperinSet)
+    $('#dipperin-settings').on('click', dipperinSet)
 
   </script>
 </div>
