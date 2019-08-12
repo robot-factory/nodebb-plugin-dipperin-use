@@ -28,7 +28,7 @@ class Controllers {
         res.render('some/complex/route');
     */
 
-    res.render('admin/plugins/quickstart', {})
+    res.render('admin/plugins/dipperinAdmin', {})
     /*
       使用回调方式中的 next(err, data) 方法。
       传递数据:

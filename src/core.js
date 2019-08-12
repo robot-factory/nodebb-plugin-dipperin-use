@@ -27,16 +27,6 @@ class Core {
     return header
   }
 
-  // async addNavigation (header) {
-  //   header.plugins.push({
-  //     'icon': 'fa-tasks',
-  //     'route': '/plugins/quickstart',
-  //     'name': '快速开始'
-  //   })
-
-  //   return header
-  // }
-
   async beforePostContent (postData) {
     console.log(postData)
     return postData

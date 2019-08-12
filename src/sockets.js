@@ -1,6 +1,7 @@
 const constants = require('./constants')
 const SocketPlugins = require.main.require('./src/socket.io/plugins');
 const db = require.main.require('./src/database')
+const winston = require('winston');
 
 SocketPlugins.myPlugin = {};
 // SocketPlugins.myPlugin.myMethod = function(socket, data, callback) { ... };
@@ -8,29 +9,68 @@ SocketPlugins.myPlugin = {};
 const sockets = {};
 
 sockets.init = function (callback) {
-    SocketPlugins[constants.SOCKETS] = {};
-    SocketPlugins[constants.SOCKETS].myMethod = function(socket, data, callback) { 
-        console.log(constants.SOCKETS+'.myMethod'+' 被触发') 
-        console.log(data)
-        console.log(socket.uid)
-        const key = `uid:${socket.uid}:dipperin`
-        const writeData = {
-            address: data.address,
-            createtime: Date.now()
+	SocketPlugins[constants.SOCKETS] = {};
+
+	// a template
+	SocketPlugins[constants.SOCKETS].myMethod = function (socket, data, callback) {
+		const key = `uid:${socket.uid}:dipperin`
+		const msg = `plugins.${constants.SOCKETS}.myMethod is called from uid-${socket.uid}, db key is ${key}`
+		console.log(msg)
+	};
+
+	SocketPlugins[constants.SOCKETS].getDipperinAddress = function (socket, data, callback) {
+		try {
+			const key = `uid:${socket.uid}:dipperin`
+			const msg = `plugins.${constants.SOCKETS}.getDipperinAddress is called from uid-${socket.uid}, db key is ${key}`
+			console.log(msg)
+			db.getObject(key, function (err, data) {
+				if (err) {
+					console.log('get', key, 'fail', err)
+					callback(null, {
+						success: false,
+						info: err
+					})
+				} else {
+					callback(null, {
+						success: true,
+						key,
+						data,
+					})
+					// console.log(`plugins.${constants.SOCKETS}.getDipperinAddress ${key} data is ${JSON.stringify(data)}`)
+				}
+			})
+		} catch(e) {
+            console.log(e)
         }
-        db.setObject(key,writeData,function() {
-            console.log('setObject',key,'success')
-        })
-        db.getObject(key,function(err,data) {
-            if (err) {
-                console.log('get',key,'fail',err)
-                return
-            }
-            console.log(key,'data',data)
-        })
-        console.log('type of callback',typeof callback)
-        callback(null,{data:'000000'})
-    };
+
+	};
+
+	SocketPlugins[constants.SOCKETS].setDipperinAddress = function (socket, data, callback) {
+		const key = `uid:${socket.uid}:dipperin`
+		const msg = `plugins.${constants.SOCKETS}.setDipperinAddress is called from uid-${socket.uid}, db key is ${key}`
+		console.log(msg)
+		const writeData = {
+			address: data.account,
+			createtime: Date.now()
+		}
+		db.setObject(key, writeData, function (err) {
+			if (err) {
+				callback(null, {
+					success: false,
+					info: err
+				})
+			} else {
+				callback(null, {
+					success: true,
+				})
+			}
+			console.log('setObject', key, 'success')
+		})
+		console.log('type of callback', typeof callback)
+		callback(null, {
+			success: true
+		})
+	};
 }
 
 module.exports = sockets
