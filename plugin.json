@@ -21,6 +21,10 @@
 		{
 			"hook": "filter:post.get",
 			"method": "filterPostGet"
+		},
+		{
+			"hook": "filter:post.create",
+			"method": "filterPostCreate"
 		}
 	],
 	"staticDirs": {

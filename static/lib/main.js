@@ -1,5 +1,8 @@
 "use strict";
 
+const APP_NAME = 'nodebb'
+const APP_ADDRESS = '0x0000Fa8ce45493EcE6ddDB8cD791fBD833a6B23890cd'
+
 function initDipperinPage() {
 	console.log('dipperin account page loaded!')
 
@@ -57,12 +60,36 @@ function initDipperinPage() {
 
 function verifyApproved() {
 	return new Promise((resolved, reject) => {
-		window.dipperinEx.isApproved('nodebb').then((data) => {
-			resolved(data);
-		}).catch((e) => {
-			reject(e)
-		})
+		window.dipperinEx.isApproved(APP_NAME)
+			.then((data) => {
+				resolved(data);
+			})
+			.catch((e) => {
+				reject(e);
+			})
 	});
+}
+
+function approveApp() {
+	return new Promise((resolved, reject) => {
+		window.dipperinEx.approve(APP_NAME)
+			.then(data => resolved(data))
+			.catch(e => reject(e));
+	});
+}
+
+function sendToApp(spend) {
+	return new Promise((resolved, reject) => {
+		// const extraData = 'To ' + APP_NAME
+		const extraData = ''
+		dipperinEx.send('nodebb', APP_ADDRESS, String(spend), extraData)
+			.then(data => {
+				resolved(data);
+			})
+			.catch(e => {
+				reject(e);
+			})
+	})
 }
 
 function initDipperinBlog() {
@@ -70,15 +97,21 @@ function initDipperinBlog() {
 	$('#new_topic').click(function (e) {
 		e.preventDefault();
 		verifyApproved().then((data) => {
-			if(data.isApproved) {
-				alert('has approve');
-				console.log(data)
-				app.newTopic(5);
+			console.log(data)
+			if (data.isApproved) {
+				sendToApp(5).then((data) => {
+					app.newTopic(5);
+				}).catch(e=>console.log('花费后才能发帖'))
+				// alert('has approve');
+				// console.log(data)
+				// app.newTopic(5);
 			} else {
 				alert('not approve');
+				// throw "not approve";
 			}
 		}).catch((e) => {
-			alert('not approve');
+			alert('approve error');
+			approveApp();
 		})
 	});
 }
@@ -97,7 +130,7 @@ $(document).ready(function () {
 	*/
 
 	// Note how this is shown in the console on the first load of every page
-	const version = '0.0.15';
+	const version = '0.0.17';
 	console.log("nodebb-plugin-dipperin: loaded", version);
 	// load tools for dipperin
 	const dipperin = {};
@@ -111,19 +144,53 @@ $(document).ready(function () {
 		console.log("on dipperin:account.myMethod data:", data);
 	});
 
+	require(['composer'], function(composer) {
+		window.composer = composer;
+	});
+
 	// add window listener
 
 	// when page change, do something
-	$(window).on("action:ajaxify.end", function (data) {
-		console.log("window action:ajaxify.end", data);
-		window.debugData = data;
-		const currentPage = data.target.ajaxify.currentPage;
+	$(window).on("action:ajaxify.end", function (ev, data) {
+		console.log("window action:ajaxify.end", ev);
+		console.log('data', data)
+		// window.debugData = data;
+		const currentPage = ajaxify.currentPage;
 		// console.log('currentPage', currentPage);
 		if (currentPage === 'dipperin') {
 			initDipperinPage();
 		} else if (currentPage === 'category/5/dipperin-blog') {
 			initDipperinBlog();
 		}
+	});
+
+	$(window).on("action:ajaxify.start", function (ev, data) {
+		console.log("action:ajaxify.start", ev);
+		console.log("action:ajaxify.start data", data)
+	});
+
+	$(window).on("action:categories.new_topic.loaded", function (ev, data) {
+		console.log("action:categories.new_topic.loaded", ev);
+		console.log("action:categories.new_topic.loaded data", data);
+	});
+
+	$(window).on("action:composer.loaded",function (ev, data) {
+		console.log("action:composer.loaded", ev);
+		console.log("action:composer.loaded data", data);
+		$(window).one('action:composer.submit', function (ev, data) {
+			console.log('action:composer.submit data', data);
+			data.composerData.isQuestion = true;
+		});
+	});
+
+	// $(window).on("action:topic.loaded", function(event, data) {
+	// 	console.log('action:topic.loaded', event);
+	// 	console.log("action:topic.loaded data", data);
+	// })
+
+	$(window).on("action:topic.loaded",function (ev, data) {
+		console.log("action:topic.loaded", ev);
+		console.log("action:topic.loaded data", data);
 	});
 
 });

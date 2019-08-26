@@ -3,21 +3,20 @@ const Controllers = require('./controllers')
 const controllers = new Controllers()
 
 class Core {
-  async init (params,callback) {
+  async init(params, callback) {
     const router = params.router
     const hostMiddleware = params.middleware
     // const hostControllers = params.controllers
     router.get('/admin/plugins/dipperin', hostMiddleware.admin.buildHeader, controllers.renderAdminPage)
     router.get('/api/admin/plugins/dipperin', controllers.renderAdminPage)
 
-    router.get('/dipperin', hostMiddleware.buildHeader, controllers.renderDipperin);
-    router.get('/api/dipperin', controllers.renderDipperin);
+    router.get('/dipperin', hostMiddleware.buildHeader, controllers.renderDipperin)
+    router.get('/api/dipperin', controllers.renderDipperin)
 
     socket.init()
-    
   }
 
-  async addAdminNavigation (header) {
+  async addAdminNavigation(header) {
     header.plugins.push({
       'icon': 'fa-tasks',
       'route': '/plugins/dipperin',
@@ -27,12 +26,12 @@ class Core {
     return header
   }
 
-  async beforePostContent (postData) {
+  async beforePostContent(postData) {
     console.log(postData)
     return postData
   }
 
-  addScript () {
+  addScript() {
     console.log('我是一个新插件！')
   }
 }

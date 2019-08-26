@@ -17,7 +17,7 @@
 
 class Controllers {
   // 已经确认由于 NodeBB 的 Express 的原因， 会导致中间件已经书写头， 造成错误， 故暂时移除此处的重写
-  renderAdminPage (req, res) {
+  renderAdminPage(req, res) {
     /*
       请确保你的路由地址能和模板路径能够对应。
       例如， 如果你的站点地址为:
@@ -52,14 +52,14 @@ class Controllers {
   }
   */
 
- renderDipperin(req, res) {
-  const data = {}
-  data.uid = req.uid
-  data.loggedIn = req.loggedIn
-  data.route = req.route
-  console.log('dipperin:', data)
-  res.render('account/plugins/dipperin', data);
-}
+  renderDipperin(req, res) {
+    const data = {}
+    data.uid = req.uid
+    data.loggedIn = req.loggedIn
+    data.route = req.route
+    console.log('dipperin:', data)
+    res.render('account/plugins/dipperin', data)
+  }
 }
 
 module.exports = Controllers

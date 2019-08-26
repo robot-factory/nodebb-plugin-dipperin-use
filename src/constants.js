@@ -1,4 +1,4 @@
 module.exports = Object.freeze({
-    NAMESPACE: 'dipperin:account',
-    SOCKETS  : 'dipperin-account'
-});
+  NAMESPACE: 'dipperin:account',
+  SOCKETS: 'dipperin-account'
+})

@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-dipperin-use",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A NodeBB plugins for using dipperin",
   "main": "library.js",
   "repository": {
@@ -34,7 +34,8 @@
     "eslint-plugin-standard": "^3.0.1"
   },
   "dependencies": {
+    "@dipperin/dipperin.js": "^0.4.46",
     "bluebird": "^3.5.1",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.15"
   }
 }
