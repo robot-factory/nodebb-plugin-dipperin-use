@@ -1,10 +1,10 @@
 'use strict'
 const callbackify = require('./callbackify')
 const _ = require('lodash')
-const Dipperin = require('@dipperin/dipperin.js')
+// const Dipperin = require('@dipperin/dipperin.js')
 
 // 初始化参数
-const dipperin = new Dipperin()
+// const dipperin = new Dipperin()
 
 // 重写所有 Promise 方法为 Callback 方式
 const transform = origin => {
@@ -50,28 +50,26 @@ plugin.actionTopicSave = function (data) {
 }
 
 plugin.filterPostCreate = async function (data, next) {
+	console.log('filter:post.create', data);
 	if (data.data.cid === 5) {
 		const postData = data.data;
 		try {
 			if (!postData.txHash) {
 				throw new Error('The topic did not pay DIP');
 			}
-			const res = await dipperin.dr.getTransaction(postData.txHash)
-			console.log(res)
-			if(!res.transaction) {
-				throw new Error('The transaction has not on chain')
-			}
       const start = new Date().valueOf();
       let end = new Date().valueOf();
       const WAIT_TIME = 5000;
       while(end - start < WAIT_TIME) {
         end = new Date().valueOf();
-        const res = await validateTx(txHash)
-        if(res.success) {
-          next(null,)
+				// const res = await dipperin.dr.getTransaction(postData.txHash)
+				const res = {success: true}
+				console.log(res)
+        if(res.transaction) {
+          next(null,data)
         }
       }
-			
+			throw new Error('The transaction has not on chain')
 
 		} catch (e) {
       next(e,null)
@@ -80,7 +78,6 @@ plugin.filterPostCreate = async function (data, next) {
 	} else {
 		next(null, data);
 	}
-	console.log('filter:post.create', data);
 }
 
 module.exports = plugin

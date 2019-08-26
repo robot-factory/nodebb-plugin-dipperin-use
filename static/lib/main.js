@@ -179,7 +179,7 @@ $(document).ready(function () {
 		console.log("action:composer.loaded data", data);
 		$(window).one('action:composer.submit', function (ev, data) {
 			console.log('action:composer.submit data', data);
-			data.composerData.isQuestion = true;
+			data.composerData.txHash = "0x31eaf669270dd2e700210215e5d4be5be85758ae13bc14cf35a5cbf5a26baf66";
 		});
 	});
 
