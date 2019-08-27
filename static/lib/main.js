@@ -1,7 +1,7 @@
 "use strict";
 
 const APP_NAME = 'nodebb'
-const APP_ADDRESS = '0x0000Fa8ce45493EcE6ddDB8cD791fBD833a6B23890cd'
+const APP_ADDRESS = '0x0000E660bFeCFbe590Eee1E27e09793af92C9cc11061'
 
 function initDipperinPage() {
 	console.log('dipperin account page loaded!')
@@ -132,8 +132,7 @@ function initDipperinBlog() {
 						$(window).on('action:composer.submit', function (ev, submitData) {
 							console.log('action:composer.submit data', submitData);
 							// get txHash from submitData.postData = composer.posts[post_uuid]
-							// TODO: validate txHash format
-							if(submitData.postData.txHash) {
+							if(dipperin.utils.isTxHash(submitData.postData.txHash)) {
 								submitData.composerData.txHash = submitData.postData.txHash;
 							}
 							// submitData.composerData.txHash = txHash;
@@ -170,23 +169,29 @@ $(document).ready(function () {
 	*/
 
 	// Note how this is shown in the console on the first load of every page
-	const version = '0.0.17';
+	const version = '0.0.18';
 	console.log("nodebb-plugin-dipperin: loaded", version);
 	// load tools for dipperin
 	const dipperin = {};
-	dipperin.utils = function () {
-		console.log('add dipperin utils');
-	};
+	// dipperin.utils = function () {
+	// 	console.log('add dipperin utils');
+	// };
 	window.dipperin = dipperin;
+	require(['dipperin/utils'], function (utils) {
+		console.log("require utils", utils);
+		window.dipperin.utils = utils;
+	});
 
 	// add socket listener
-	socket.on("dipperin:account.myMethod", function (data) {
-		console.log("on dipperin:account.myMethod data:", data);
-	});
+	// for example
+	// socket.on("dipperin:account.myMethod", function (data) {
+	// 	console.log("on dipperin:account.myMethod data:", data);
+	// });
 
 	require(['composer'], function (composer) {
 		window.composer = composer;
 	});
+	
 
 	// add window listener
 

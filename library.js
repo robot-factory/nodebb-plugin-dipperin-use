@@ -51,42 +51,44 @@ plugin.actionTopicSave = function (data) {
 }
 
 plugin.filterPostCreate = function (data, next) {
-	winston.info("filterPostCreate top=================================");
-	console.log('filter:post.create', data);
-	// console.log('filter:post.create data', data.data);
-	// console.log("cid:", data.data.cid, "cid == 5:", String(data.data.cid) === '5', typeof data.data.cid);
-	if (String(data.data.cid) === '5') {
-		const postData = data.data;
-		console.log(data.data.txHash);
-		if (!postData.txHash) {
-			throw new Error("The post don't pay DIP!");
-		} else {
-			// console.log(new dipperin.default())
-			_dipperin.dr.getTransaction(postData.txHash).then(
-				txRes => {
-					console.log(txRes);
-					if(txRes.transaction) {
-						data.post.txHash = postData.txHash
-						next(null, data);
-					} else {
-						next(new Error("交易还未上链"), null)
-					}
-					// console.log(res);
-					// next(null, data);
-				}
-			).catch(e => {
-				console.log(e);
-				next(new Error(e), null);
-			})
-		}
-
-	} else {
-		next(null, data);
-	}
-	//winston.info("add dice seed");
-	//winston.info(payload.post.content);
-
-	winston.info("filterPostCreate bottom=============================================");
+	console.log("filter:post.create", data);
+	// save txHash data in db
+	const postData = data.data;
+	data.post.txHash = postData.txHash
+	// next step
+	next(null, data);
+	// winston.info("filterPostCreate top=================================");
+	// console.log('filter:post.create', data);
+	// // console.log('filter:post.create data', data.data);
+	// // console.log("cid:", data.data.cid, "cid == 5:", String(data.data.cid) === '5', typeof data.data.cid);
+	// if (String(data.data.cid) === '5') {
+	// 	const postData = data.data;
+	// 	console.log(data.data.txHash);
+	// 	if (!postData.txHash) {
+	// 		throw new Error("The post don't pay DIP!");
+	// 	} else {
+	// 		// console.log(new dipperin.default())
+	// 		_dipperin.dr.getTransaction(postData.txHash).then(
+	// 			txRes => {
+	// 				console.log(txRes);
+	// 				if(txRes.transaction) {
+	// 					data.post.txHash = postData.txHash
+	// 					next(null, data);
+	// 				} else {
+	// 					next(new Error("交易还未上链"), null)
+	// 				}
+	// 				// console.log(res);
+	// 				// next(null, data);
+	// 			}
+	// 		).catch(e => {
+	// 			console.log(e);
+	// 			next(new Error(e), null);
+	// 		})
+	// 	}
+	// } else {
+	// 	next(null, data);
+	// }
+	// winston.info("filterPostCreate bottom=============================================");
 }
 
 plugin.filterTopicPost = function (data, next) {
@@ -111,11 +113,11 @@ plugin.filterTopicPost = function (data, next) {
 				next(new Error(e), null);
 			})
 		}
-
 	} else {
 		next(null, data);
 	}
 	winston.info("filtertopicpost bottom=============================================");
 }
+
 
 module.exports = plugin

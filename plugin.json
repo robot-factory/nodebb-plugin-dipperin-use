@@ -11,10 +11,6 @@
 			"method": "addAdminNavigation"
 		}, 
 		{
-			"hook": "filter:header.build",
-			"method": "addNavigation"
-		}, 
-		{
 			"hook": "action:post.save",
 			"method": "actionPostSave"
 		},
@@ -31,6 +27,9 @@
 			"method": "filterTopicPost"
 		}
 	],
+	"modules": {
+		"dipperin/utils.js": "static/lib/dipperin/utils.js"
+	},
 	"staticDirs": {
 		"static": "./static"
 	},
