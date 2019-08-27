@@ -92,25 +92,65 @@ function sendToApp(spend) {
 	})
 }
 
+function hasnotDipperinEx() {
+	return !window.dipperinEx;
+}
+
+function handleSendToAppError(e) {
+	if(e.isHaveWallet === false) {
+		alert('请创建您的钱包！');
+	} else if (e.isUnlock == false) {
+		alert('请解锁您的钱包插件！');
+	} else if (e.isApproved === false) {
+		alert('请对 nodebb 进行授权！')
+	} else if (e.popupExist == true) {
+		alert('请完成上一个交易！')
+	} else {
+		alert('付费失败，请重新付费后进行发帖')
+	}
+}
+
 function initDipperinBlog() {
 	$('body').off('click');
 	$('#new_topic').click(function (e) {
 		e.preventDefault();
+		if (hasnotDipperinEx()) {
+			alert('请安装Dipperin chrome插件！')
+			return
+		}
 		verifyApproved().then((data) => {
 			console.log(data)
 			if (data.isApproved) {
-				sendToApp(5).then((data) => {
+				sendToApp(0.1).then((txHash) => {
+					console.log("SendToApp", txHash);
 					app.newTopic(5);
-				}).catch(e=>console.log('花费后才能发帖'))
-				// alert('has approve');
-				// console.log(data)
-				// app.newTopic(5);
+					$(window).one("action:composer.loaded", function (ev, composerLoadedData) {
+						console.log("action:composer.loaded data", composerLoadedData);
+						// post the txHash data to composer.posts
+						composer.posts[composerLoadedData["post_uuid"]].txHash = txHash;
+						// TODO: should I move it to global, because it don't rely on others
+						$(window).on('action:composer.submit', function (ev, submitData) {
+							console.log('action:composer.submit data', submitData);
+							// get txHash from submitData.postData = composer.posts[post_uuid]
+							// TODO: validate txHash format
+							if(submitData.postData.txHash) {
+								submitData.composerData.txHash = submitData.postData.txHash;
+							}
+							// submitData.composerData.txHash = txHash;
+							// composer.posts[composerLoadedData["post_uuid"]] = txHash;
+						});
+					});
+				}).catch(e => {
+					console.log("sendToApp Error:", e);
+					handleSendToAppError(e);
+					return
+				})
 			} else {
-				alert('not approve');
-				// throw "not approve";
+				// alert('not approve');
+				throw new Error("not approve");
 			}
 		}).catch((e) => {
-			alert('approve error');
+			alert('未完成授权');
 			approveApp();
 		})
 	});
@@ -144,7 +184,7 @@ $(document).ready(function () {
 		console.log("on dipperin:account.myMethod data:", data);
 	});
 
-	require(['composer'], function(composer) {
+	require(['composer'], function (composer) {
 		window.composer = composer;
 	});
 
@@ -175,12 +215,12 @@ $(document).ready(function () {
 	});
 
 	$(window).on("action:composer.loaded",function (ev, data) {
-		console.log("action:composer.loaded", ev);
+		// console.log("action:composer.loaded", ev);
 		console.log("action:composer.loaded data", data);
-		$(window).one('action:composer.submit', function (ev, data) {
-			console.log('action:composer.submit data', data);
-			data.composerData.txHash = "0x31eaf669270dd2e700210215e5d4be5be85758ae13bc14cf35a5cbf5a26baf66";
-		});
+		// $(window).one('action:composer.submit', function (ev, data) {
+		// 	console.log('action:composer.submit data', data);
+		// 	data.composerData.txHash = "0x31eaf669270dd2e700210215e5d4be5be85758ae13bc14cf35a5cbf5a26baf66";
+		// });
 	});
 
 	// $(window).on("action:topic.loaded", function(event, data) {
@@ -188,7 +228,7 @@ $(document).ready(function () {
 	// 	console.log("action:topic.loaded data", data);
 	// })
 
-	$(window).on("action:topic.loaded",function (ev, data) {
+	$(window).on("action:topic.loaded", function (ev, data) {
 		console.log("action:topic.loaded", ev);
 		console.log("action:topic.loaded data", data);
 	});

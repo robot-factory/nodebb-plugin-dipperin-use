@@ -1,10 +1,11 @@
 'use strict'
 const callbackify = require('./callbackify')
 const _ = require('lodash')
-// const Dipperin = require('@dipperin/dipperin.js')
+const winston = require('winston');
+const dipperin = require('@dipperin/dipperin.js')
 
 // 初始化参数
-// const dipperin = new Dipperin()
+const _dipperin = new dipperin.default("http://14.17.65.122:3035")
 
 // 重写所有 Promise 方法为 Callback 方式
 const transform = origin => {
@@ -39,45 +40,82 @@ plugin.filterPostGet = function (data, next) {
 	// console.log('filter:post.save', data, '等待5s！');
 	// setTimeout(() => {
 	// 	next(null, data);
-  // }, 5000);
-  
+	// }, 5000);
+
 	console.log('filter:post.save', data);
-  next(null, data);
+	next(null, data);
 }
 
 plugin.actionTopicSave = function (data) {
 	console.log('topic data', data)
 }
 
-plugin.filterPostCreate = async function (data, next) {
+plugin.filterPostCreate = function (data, next) {
+	winston.info("filterPostCreate top=================================");
 	console.log('filter:post.create', data);
-	if (data.data.cid === 5) {
+	// console.log('filter:post.create data', data.data);
+	// console.log("cid:", data.data.cid, "cid == 5:", String(data.data.cid) === '5', typeof data.data.cid);
+	if (String(data.data.cid) === '5') {
 		const postData = data.data;
-		try {
-			if (!postData.txHash) {
-				throw new Error('The topic did not pay DIP');
-			}
-      const start = new Date().valueOf();
-      let end = new Date().valueOf();
-      const WAIT_TIME = 5000;
-      while(end - start < WAIT_TIME) {
-        end = new Date().valueOf();
-				// const res = await dipperin.dr.getTransaction(postData.txHash)
-				const res = {success: true}
-				console.log(res)
-        if(res.transaction) {
-          next(null,data)
-        }
-      }
-			throw new Error('The transaction has not on chain')
-
-		} catch (e) {
-      next(e,null)
-			throw new Error(e)
+		console.log(data.data.txHash);
+		if (!postData.txHash) {
+			throw new Error("The post don't pay DIP!");
+		} else {
+			// console.log(new dipperin.default())
+			_dipperin.dr.getTransaction(postData.txHash).then(
+				txRes => {
+					console.log(txRes);
+					if(txRes.transaction) {
+						data.post.txHash = postData.txHash
+						next(null, data);
+					} else {
+						next(new Error("交易还未上链"), null)
+					}
+					// console.log(res);
+					// next(null, data);
+				}
+			).catch(e => {
+				console.log(e);
+				next(new Error(e), null);
+			})
 		}
+
 	} else {
 		next(null, data);
 	}
+	//winston.info("add dice seed");
+	//winston.info(payload.post.content);
+
+	winston.info("filterPostCreate bottom=============================================");
+}
+
+plugin.filterTopicPost = function (data, next) {
+	winston.info("filtertopicpost top=================================");
+	console.log('filter:topic.post', data);
+	if (String(data.cid) === '5') {
+		console.log(data.txHash);
+		if (!data.txHash) {
+			throw new Error("The post don't pay DIP!");
+		} else {
+			_dipperin.dr.getTransaction(data.txHash).then(
+				txRes => {
+					console.log(txRes);
+					if(txRes.transaction) {
+						next(null, data);
+					} else {
+						next(new Error("交易还未上链"), null)
+					}
+				}
+			).catch(e => {
+				console.log(e);
+				next(new Error(e), null);
+			})
+		}
+
+	} else {
+		next(null, data);
+	}
+	winston.info("filtertopicpost bottom=============================================");
 }
 
 module.exports = plugin

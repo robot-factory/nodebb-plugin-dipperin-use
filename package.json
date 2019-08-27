@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-dipperin-use",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A NodeBB plugins for using dipperin",
   "main": "library.js",
   "repository": {
