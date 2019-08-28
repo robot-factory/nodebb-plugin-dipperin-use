@@ -25,6 +25,18 @@
 		{
 			"hook": "filter:topic.post",
 			"method": "filterTopicPost"
+		},
+		{
+			"hook": "filter:topics.get",
+			"method": "filterTopicsGet"
+		},
+		{
+			"hook": "filter:topic.create",
+			"method": "filterTopicCreate"
+		},
+		{
+			"hook": "filter:topic.get",
+			"method": "filterTopicGet"
 		}
 	],
 	"modules": {

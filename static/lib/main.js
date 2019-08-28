@@ -111,9 +111,10 @@ function handleSendToAppError(e) {
 }
 
 function initDipperinBlog() {
-	$('body').off('click');
+	// $('body').off('click');
 	$('#new_topic').click(function (e) {
 		e.preventDefault();
+		e.stopPropagation();
 		if (hasnotDipperinEx()) {
 			alert('请安装Dipperin chrome插件！')
 			return
@@ -128,16 +129,6 @@ function initDipperinBlog() {
 						console.log("action:composer.loaded data", composerLoadedData);
 						// post the txHash data to composer.posts
 						composer.posts[composerLoadedData["post_uuid"]].txHash = txHash;
-						// TODO: should I move it to global, because it don't rely on others
-						$(window).on('action:composer.submit', function (ev, submitData) {
-							console.log('action:composer.submit data', submitData);
-							// get txHash from submitData.postData = composer.posts[post_uuid]
-							if(dipperin.utils.isTxHash(submitData.postData.txHash)) {
-								submitData.composerData.txHash = submitData.postData.txHash;
-							}
-							// submitData.composerData.txHash = txHash;
-							// composer.posts[composerLoadedData["post_uuid"]] = txHash;
-						});
 					});
 				}).catch(e => {
 					console.log("sendToApp Error:", e);
@@ -232,6 +223,16 @@ $(document).ready(function () {
 	// 	console.log('action:topic.loaded', event);
 	// 	console.log("action:topic.loaded data", data);
 	// })
+
+	$(window).on('action:composer.submit', function (ev, submitData) {
+		console.log('action:composer.submit data', submitData);
+		// get txHash from submitData.postData = composer.posts[post_uuid]
+		if(dipperin.utils.isTxHash(submitData.postData.txHash)) {
+			submitData.composerData.txHash = submitData.postData.txHash;
+		}
+		// submitData.composerData.txHash = txHash;
+		// composer.posts[composerLoadedData["post_uuid"]] = txHash;
+	});
 
 	$(window).on("action:topic.loaded", function (ev, data) {
 		console.log("action:topic.loaded", ev);
