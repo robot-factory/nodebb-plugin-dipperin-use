@@ -146,6 +146,14 @@ function initDipperinBlog() {
 	});
 }
 
+function isDipperinPage(url) {
+	return url === "dipperin"
+}
+
+function isDipperinBlog(url) {
+	return url === 'category/5/dipperin-blog'
+}
+
 $(document).ready(function () {
 	/*
 		This file shows how client-side javascript can be included via a plugin.
@@ -169,7 +177,7 @@ $(document).ready(function () {
 	// };
 	window.dipperin = dipperin;
 	require(['dipperin/utils'], function (utils) {
-		console.log("require utils", utils);
+		// console.log("require utils", utils);
 		window.dipperin.utils = utils;
 	});
 
@@ -191,11 +199,12 @@ $(document).ready(function () {
 		console.log("window action:ajaxify.end", ev);
 		console.log('data', data)
 		// window.debugData = data;
-		const currentPage = ajaxify.currentPage;
+		const currentPage = data.url;
 		// console.log('currentPage', currentPage);
-		if (currentPage === 'dipperin') {
+		if (isDipperinPage(currentPage)) {
 			initDipperinPage();
-		} else if (currentPage === 'category/5/dipperin-blog') {
+		} 
+		if (isDipperinBlog(currentPage)) {
 			initDipperinBlog();
 		}
 	});
@@ -219,11 +228,6 @@ $(document).ready(function () {
 		// });
 	});
 
-	// $(window).on("action:topic.loaded", function(event, data) {
-	// 	console.log('action:topic.loaded', event);
-	// 	console.log("action:topic.loaded data", data);
-	// })
-
 	$(window).on('action:composer.submit', function (ev, submitData) {
 		console.log('action:composer.submit data', submitData);
 		// get txHash from submitData.postData = composer.posts[post_uuid]
@@ -234,9 +238,11 @@ $(document).ready(function () {
 		// composer.posts[composerLoadedData["post_uuid"]] = txHash;
 	});
 
-	$(window).on("action:topic.loaded", function (ev, data) {
-		console.log("action:topic.loaded", ev);
-		console.log("action:topic.loaded data", data);
+	$(window).on("action:topic.loaded", function (ev, topicData) {
+		// console.log("action:topic.loaded", ev);
+		console.log("action:topic.loaded data", topicData);
+		if (topicData.spendValue) {
+			$('.topic-title[component="topic/title"]').append(`<span class="spendDip" style="font-size:16px"><i class="fa fa-usd golden"></i> ${topicData.spendValue} DIP</span>`)
+		}
 	});
-
 });
