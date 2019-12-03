@@ -19,7 +19,11 @@ sockets.init = function (callback) {
   }
   SocketPlugins[constants.SOCKETS].getDipperinAddress = function (socket, data, callback) {
     try {
-      const key = `uid:${socket.uid}:dipperin`
+      let uid = socket.uid
+      if (data) {
+        uid = String(data)
+      }
+      const key = `uid:${uid}:dipperin`
       const msg = `plugins.${constants.SOCKETS}.getDipperinAddress is called from uid-${socket.uid}, db key is ${key}`
       console.log(msg)
       db.getObject(key, function (err, data) {
