@@ -69,6 +69,12 @@ sockets.init = function (callback) {
       success: true
     })
   }
+
+  SocketPlugins[constants.SOCKETS].tippingTopic = function (socket, data, callback) {
+    const msg = `plugins.${constants.SOCKETS}.setDipperinAddress is called from uid-${socket.uid}`
+    console.log(msg, data)
+    callback(null, null);
+  }
 }
 
 module.exports = sockets

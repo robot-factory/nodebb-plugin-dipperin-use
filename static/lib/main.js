@@ -243,6 +243,68 @@ $(document).ready(function () {
 		console.log("action:topic.loaded data", topicData);
 		if (topicData.spendValue) {
 			$('.topic-title[component="topic/title"]').append(`<span class="spendDip" style="font-size:16px"><i class="fa fa-usd golden"></i> ${topicData.spendValue} DIP</span>`)
+			
+			$('[component="topic/mark-unread"]').before(`\n<button type="button" class="btn btn-danger" component="topic/tipping" data-toggle="modal" data-target="#tipping">
+				<span class="visible-sm-inline visible-md-inline visible-lg-inline">打赏</span>
+			</button>\n`)
+			$('#content.container').append(`<!-- Modal -->
+			<div class="modal fade" id="tipping" tabindex="-1" role="dialog" aria-labelledby="tipModalLabel">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="tipModalLabel">向作者打赏</h4>
+						</div>
+						<div class="modal-body" style="text-align:center;">
+							<input id="tipping-value" type="number" placeholder="自定义金额" style="text-align:center;"/>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							<button id="tippingConfirm" type="button" class="btn btn-danger">打赏</button>
+						</div>
+					</div>
+				</div>
+			</div>`)
+			$('#tippingConfirm').on('click', function(e) {
+				const tipValue = $('#tipping-value').val() || '1'
+				if (hasnotDipperinEx()) {
+					alert('请安装Dipperin chrome插件！')
+					return
+				}
+				console.log(tipValue)
+				verifyApproved().then((data) => {
+					console.log(data)
+					if (data.isApproved) {
+						sendToApp(tipValue).then((txHash) => {
+							console.log("SendToApp", txHash);
+							const tippingData = {
+								txHash: txHash,
+								uid: topicData.uid,
+								tid: topicData.tid
+							}
+							socket.emit('plugins.dipperin-account.tippingTopic', tippingData, function (err, data) {
+								if (err) {
+									console.log('dipperin-account.tippingTopic error:', err)
+								} else {
+									console.log('dipperin-account.tippingTopic data:', data)
+								}
+							})
+
+							$('#tipping').modal('hide')
+						}).catch(e => {
+							console.log("sendToApp Error:", e);
+							handleSendToAppError(e);
+							return
+						})
+					} else {
+						// alert('not approve');
+						throw new Error("not approve");
+					}
+				}).catch((e) => {
+					alert('未完成授权');
+					approveApp();
+				})
+			});
 		}
 	});
 });
